@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TopUp Store | Cepat & Terpercaya</title>
+    
+    <style>
+        /* CSS - TAMPILAN WEBSITE */
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #1a202c; /* Warna gelap modern */
+            color: #fff;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: #2d3748;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+            margin-bottom: 20px;
+        }
+
+        h3 {
+            margin-top: 0;
+            font-size: 1.1rem;
+            color: #63b3ed;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            margin-top: 10px;
+            border: 1px solid #4a5568;
+            border-radius: 8px;
+            background: #1a202c;
+            color: white;
+            box-sizing: border-box;
+        }
+
+        .grid-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .option {
+            padding: 15px;
+            border: 2px solid #4a5568;
+            background: transparent;
+            color: white;
+            cursor: pointer;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        .option:hover {
+            border-color: #63b3ed;
+        }
+
+        .option.active {
+            background: #63b3ed;
+            border-color: #63b3ed;
+            color: #1a202c;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 15px;
+            background: #48bb78;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: 0.3s;
+        }
+
+        .btn-submit:hover {
+            background: #38a169;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Diamond Store</h1>
+            <p>Top Up Otomatis 24 Jam</p>
+        </header>
+
+        <div class="card">
+            <h3>1. Masukkan User ID</h3>
+            <input type="text" id="userId" placeholder="Masukkan ID (Contoh: 1234567)">
+        </div>
+
+        <div class="card">
+            <h3>2. Pilih Nominal Diamonds</h3>
+            <div class="grid-options">
+                <button class="option" onclick="selectNominal(this, '50 Diamonds', 'Rp 15.000')">50 Diamonds</button>
+                <button class="option" onclick="selectNominal(this, '100 Diamonds', 'Rp 30.000')">100 Diamonds</button>
+                <button class="option" onclick="selectNominal(this, '250 Diamonds', 'Rp 75.000')">250 Diamonds</button>
+                <button class="option" onclick="selectNominal(this, '500 Diamonds', 'Rp 145.000')">500 Diamonds</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>3. Metode Pembayaran</h3>
+            <select id="payment">
+                <option value="QRIS">QRIS / E-Wallet</option>
+                <option value="BCA">Transfer Bank BCA</option>
+                <option value="Indomaret">Indomaret / Alfamart</option>
+            </select>
+        </div>
+
+        <button class="btn-submit" onclick="kirimWhatsApp()">Pesan Sekarang (WhatsApp)</button>
+    </div>
+
+    <script>
+        /* JS - LOGIKA PEMESANAN */
+        let selectedProduct = "";
+        let selectedPrice = "";
+
+        function selectNominal(element, diamond, harga) {
+            // Hapus class active dari semua tombol
+            let options = document.querySelectorAll('.option');
+            options.forEach(opt => opt.classList.remove('active'));
+            
+            // Tambahkan class active ke tombol yang diklik
+            element.classList.add('active');
+            
+            selectedProduct = diamond;
+            selectedPrice = harga;
+        }
+
+        function kirimWhatsApp() {
+            const userId = document.getElementById('userId').value;
+            const payment = document.getElementById('payment').value;
+            const phone = "628123456789"; // GANTI DENGAN NOMOR WHATSAPP KAMU
+
+            if (!userId || !selectedProduct) {
+                alert("Mohon isi ID dan pilih nominal terlebih dahulu!");
+                return;
+            }
+
+            // Susun Pesan
+            const pesan = `Halo Admin, saya mau Top Up:\n\n` +
+                          `ID User: ${userId}\n` +
+                          `Produk: ${selectedProduct}\n` +
+                          `Harga: ${selectedPrice}\n` +
+                          `Metode: ${payment}\n\n` +
+                          `Mohon diproses ya!`;
+
+            // Encode pesan untuk URL
+            const url = `https://wa.me/${phone}?text=${encodeURIComponent(pesan)}`;
+            
+            // Buka WhatsApp
+            window.open(url, '_blank');
+        }
+    </script>
+
+</body>
+</html>
