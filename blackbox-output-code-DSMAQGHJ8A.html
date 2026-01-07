@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Konfirmasi Data</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .data-item {
+            margin-bottom: 15px;
+        }
+        .data-item label {
+            font-weight: bold;
+            display: inline-block;
+            width: 150px;
+        }
+        .data-item span {
+            color: #555;
+        }
+        .photo-section {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .photo-section img {
+            max-width: 200px;
+            margin: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .buttons {
+            text-align: center;
+            margin-top: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 0 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .confirm-btn {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .confirm-btn:hover {
+            background-color: #45a049;
+        }
+        .print-btn {
+            background-color: #2196F3;
+            color: white;
+        }
+        .print-btn:hover {
+            background-color: #0b7dda;
+        }
+        .camera-btn {
+            background-color: #FF9800;
+            color: white;
+        }
+        .camera-btn:hover {
+            background-color: #e68900;
+        }
+        .camera-container {
+            display: none;
+            margin-top: 20px;
+        }
+        video, canvas {
+            max-width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Konfirmasi Data Pengguna</h1>
+        <div class="data-item">
+            <label>NIK:</label>
+            <span id="nik">1234567890123456</span> <!-- Ganti dengan data aktual -->
+        </div>
+        <div class="data-item">
+            <label>Email:</label>
+            <span id="email">user@example.com</span> <!-- Ganti dengan data aktual -->
+        </div>
+        <div class="data-item">
+            <label>Tempat Tanggal Lahir:</label>
+            <span id="ttl">Jakarta, 01 Januari 1990</span> <!-- Ganti dengan data aktual -->
+        </div>
+        <div class="data-item">
+            <label>No. Telepon:</label>
+            <span id="telepon">081234567890</span> <!-- Ganti dengan data aktual -->
+        </div>
+        <div class="photo-section">
+            <h3>Foto KTP</h3>
+            <img src="placeholder-ktp.jpg" alt="Foto KTP" id="foto-ktp"> <!-- Ganti dengan URL gambar aktual -->
+            <button class="camera-btn" onclick="openCamera('ktp')">Ambil Foto KTP (Kamera Belakang)</button>
+            <h3>Selfie dengan KTP</h3>
+            <img src="placeholder-selfie.jpg" alt="Selfie KTP" id="selfie-ktp"> <!-- Ganti dengan URL gambar aktual -->
+            <button class="camera-btn" onclick="openCamera('selfie')">Ambil Selfie KTP (Kamera Depan)</button>
+        </div>
+        <div class="camera-container" id="camera-container">
+            <video id="video" autoplay></video>
+            <br>
+            <button onclick="capturePhoto()">Ambil Foto</button>
+            <button onclick="closeCamera()">Tutup Kamera</button>
+            <canvas id="canvas" style="display:none;"></canvas>
+        </div>
+        <div class="buttons">
+            <button class="confirm-btn" onclick="confirmData()">Konfirmasi Data</button>
+            <button class="print-btn" onclick="window.print()">Cetak Konfirmasi</button>
+        </div>
+    </div>
+
+    <script>
+        let stream;
+        let currentTarget;
+
+        function openCamera(type) {
+            currentTarget = type;
+            const facingMode = type === 'ktp' ? 'environment' : 'user'; // Belakang untuk KTP, depan untuk selfie
+            navigator.mediaDevices.getUserMedia({ video: { facingMode: facingMode } })
+                .then(function(mediaStream) {
+                    stream = mediaStream;
+                    const video = document.getElementById('video');
+                    video.srcObject = mediaStream;
+                    document.getElementById('camera-container').style.display = 'block';
+                })
+                .catch(function(err) {
+                    alert('Tidak dapat mengakses kamera: ' + err.message);
+                });
+        }
+
+        function capturePhoto() {
+            const video = document.getElementById('video');
+            const canvas = document.getElementById('canvas');
+            const context = canvas.getContext('2d');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            const dataURL = canvas.toDataURL('image/png');
+            if (currentTarget === 'ktp') {
+                document.getElementById('foto-ktp').src = dataURL;
+            } else {
+                document.getElementById('selfie-ktp').src = dataURL;
+            }
+            closeCamera();
+        }
+
+        function closeCamera() {
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+            }
+            document.getElementById('camera-container').style.display = 'none';
+        }
+
+        function confirmData() {
+            // Fungsi untuk mengonfirmasi data
+            const nik = document.getElementById('nik').textContent;
+            const email = document.getElementById('email').textContent;
+            const ttl = document.getElementById('ttl').textContent;
+            const telepon = document.getElementById('telepon').textContent;
+
+            // Contoh: Tampilkan alert konfirmasi
+            alert(`Data telah dikonfirmasi!\n\nNIK: ${nik}\nEmail: ${email}\nTTL: ${ttl}\nTelepon: ${telepon}`);
+
+            // Di sini Anda bisa menambahkan logika untuk mengirim data ke server, misalnya menggunakan fetch() atau AJAX
+            // Contoh sederhana (ganti dengan endpoint aktual):
+            // fetch('/api/confirm', {
+            //     method: 'POST',
+            //     headers: { 'Content-Type': 'application/json' },
+            //     body: JSON.stringify({ nik, email, ttl, telepon })
+            // }).then(response => response.json()).then(data => console.log(data));
+        }
+    </script>
+</body>
+</html>
